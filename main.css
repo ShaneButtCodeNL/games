@@ -1,0 +1,88 @@
+:root{
+    --borderWidth:1px;
+    --backgroundColor:rgb(59, 59, 59);
+    --backgroundColorBar:rgb(70, 70, 70);
+    --fontColor:rgb(200,200,200);
+}
+
+*{
+    padding: 0;
+    margin:0;
+}
+
+#mainBody{
+    margin: 0;
+    padding: 0;
+    line-height: 1.2rem;
+    font-size: 1rem;
+    position: relative;
+    background-color: var(--backgroundColor);
+    color: var(--fontColor);
+    height:100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+
+}
+#titleBar{
+    flex: 0 1 2.4em;
+    display: flex;
+    background-color: var(--backgroundColorBar);
+}
+#logo{
+    flex:0 1 33%;
+}
+#gameSelector{
+   flex: 0 1 33%;
+   align-self: center;
+}
+#contentArea{
+    flex:1 1 1em;
+    display: flex;
+    align-content: stretch;
+}
+#sideBar{
+    flex:0 1 auto;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: clip;
+    background-color: var(--backgroundColorBar);
+    display: flex;
+    
+}
+#sideBarSlide{
+    flex:0 0;
+    width:1.2ch;
+    display: flex;
+    flex-direction: column;
+    border:1px outset;
+    border-right: none;
+    border-color: var(--backgroundColor);
+    transition: filter .2s ease-in;
+}
+#sideBarSlide:hover{
+    filter: brightness(1.5);
+}
+.slideChar{
+    flex:0 0 1.1rem
+}
+.slideLine{
+    flex:1 1 1rem;
+    width: .2ch;
+    background-color: var(--backgroundColor);
+    align-self: center;
+}
+#sideBarContent{
+    flex: 1 1 auto;
+    width: 10ch;
+    overflow-x: hidden;
+    overflow-y: auto;
+    will-change: width;
+    transition:width .3s ease-out;
+}
+#content{
+    position: relative;
+    flex:1 1 100%;
+    overflow: auto;
+    padding: 1ch 0 0 1ch;
+}
