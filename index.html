@@ -1,33 +1,51 @@
 <!DOCTYPE html>
 <html>
-    <meta charset="UTF-8">
-    <meta name="description" content="Games made to practice html css and js">
-    <meta name="keywords" content="HTML,CSS,JS,CODE,GAME">
-    <meta name="author" content="Shane Butt">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <head>
-        <link rel="stylesheet" href="./main.css">
-        <script src="script.js"></script>
-        <title>Fun little Games</title>
-    </head>
-    <body>
-        <div id="mainBody">
-            <div id="titleBar">
-                <div id="logo">Shane's Code</div>
-                <select id="gameSelector">
-                    <option value=gameTextAdventure>Text Based Adventure</option>
-                    <option>test 2</option>
-                </select>
-            </div>
-            <div id="contentArea">
-                <div id="sideBar">
-                    <div id="sideBarContent">Content</div>
-                    <div id="sideBarSlide" onclick="slideSideBar()"><span class="slideChar">S</span><div class="slideLine"></div><span class="slideChar">S</span></div>
-                </div>
-                <div id="content">
-                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. At dignissimos maxime totam quas dolores consequatur earum, deserunt unde non, dicta magnam ducimus beatae, harum perferendis. Voluptatum quos quae tenetur qui.
-                </div>
-            </div>
+  <meta charset="UTF-8" />
+  <meta name="description" content="Games made to practice html css and js" />
+  <meta name="keywords" content="HTML,CSS,JS,CODE,GAME" />
+  <meta name="author" content="Shane Butt" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <head>
+    <link rel="stylesheet" href="./main.css" />
+    <script src="script.js"></script>
+    <title>Fun little Games</title>
+  </head>
+  <body>
+    <div id="mainBody">
+      <div id="titleBar">
+        <div id="logo">Shane's Code</div>
+        <select id="gameSelector">
+          <option>None</option>
+          <option value="gameTextAdventure">
+            Text Based Adventure(Not Implemnted)
+          </option>
+          <option value="MineSwepper">MineSwepper(Not Implemnted)</option>
+        </select>
+      </div>
+      <div id="contentArea">
+        <div id="sideBar">
+          <div id="sideBarContent">Content</div>
+          <div id="sideBarSlide" onclick="slideSideBar()">
+            <span class="slideChar">S</span>
+            <div class="slideLine"></div>
+            <span class="slideChar">S</span>
+          </div>
         </div>
-    </body>
+        <div id="gameWindow">
+          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quo alias
+          inventore nemo, voluptas obcaecati enim provident mollitia dolorem
+          veritatis reprehenderit, tempore facilis nostrum iure! Repudiandae
+          nihil, tempora debitis sunt libero minima animi autem illo quod
+          dolorum enim. Officiis similique blanditiis itaque, quidem,
+          accusantium eveniet nostrum in perferendis nobis temporibus fugiat,
+          atque harum! Obcaecati earum suscipit similique architecto assumenda
+          quaerat dignissimos deserunt eum? Et rem quos cumque, placeat,
+          distinctio repudiandae sunt itaque, quod voluptatibus id odio!
+          Architecto reprehenderit assumenda quae. Magnam expedita distinctio,
+          quo vitae, quasi laboriosam voluptates modi tenetur aperiam neque
+          corporis recusandae nulla dicta hic. Nulla ab harum unde.
+        </div>
+      </div>
+    </div>
+  </body>
 </html>
