@@ -46,7 +46,7 @@ class MineSweeper {
    * @returns {Array<number>}
    * */
   getPosition(num) {
-    return [Math.ceil(num / this.width) - 1, num % this.width];
+    return [Math.floor(num / this.width), num % this.width];
   }
   /**
    * gets a 1d pos from a 2d pos
@@ -135,7 +135,7 @@ class MineSweeper {
    * @param {Number} pos the position in a 1d array that we are uncovering
    */
   async activate(pos) {
-    console.log("\tACTIVATECALLED");
+    console.log("\tACTIVATECALLED pos", pos);
     const [l, w] = this.getPosition(pos);
     console.log("\tl,w,field", l, w, this.#minefield[l][w]);
     //Already revealed
@@ -144,10 +144,12 @@ class MineSweeper {
     const val = this.#minefield[l][w].value;
     //Found bomb
     if (val === mine) {
+      console.log("\t\tFOUNDBOMB");
       this.gameState = -1;
       this.#minefield[l][w].revealed = true;
       return;
     }
+    console.log("\t\t", val);
     if (val) {
       this.#minefield[l][w].revealed = true;
       return;
