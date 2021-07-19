@@ -1,9 +1,9 @@
-import { RandomWholeNumber } from "../scripts/RandomNumber";
 //Window from main page
-const gameWindow = document.getElementById("gameWindow");
+const getGameWindow = () => document.getElementById("gameWindow");
 //Container for minefield
 const mineFieldContainer = document.createElement("div");
-gameWindow.innerHTML = mineFieldContainer;
+mineFieldContainer.id = "minefieldContainer";
+mineFieldContainer.innerHTML = "<p>TEST DIV</p>";
 //Value of a mine
 const mine = -1;
 //Used in render
@@ -11,8 +11,23 @@ const renderValue = (val) => {
   if (val) return val === mine ? "B" : `${val}`;
   return "";
 };
+let game;
+const clickFunction = async (pos) => {
+  console.log("CLICKFUNCTIONCALLED");
+  await game.activate(pos);
+  await game.render();
+  getGameWindow().innerHTML = "";
+  getGameWindow().appendChild(mineFieldContainer);
+};
+const loadMineSweeper = (rows, cols, mines) => {
+  console.log("loadMineSweeper", rows, cols, mines);
+  game = new MineSweeper(rows, cols, mines);
+  getGameWindow().innerHTML = "";
+  getGameWindow().appendChild(mineFieldContainer);
+  game.render();
+};
 
-export default class MineSweeper {
+class MineSweeper {
   //Public
   //Vertical Length of Minefield
   length;
@@ -23,8 +38,6 @@ export default class MineSweeper {
   //Game state 1=win 0=Ongoing -1=lose
   gameState = 0;
   //Private
-  //Random Number generator
-  #rand;
   //The locations of the mines
   #minePlacement;
   //The minefield
@@ -32,7 +45,7 @@ export default class MineSweeper {
   /**Gets a length,width pos from a number
    * @returns {Array<number>}
    * */
-  #getPosition(num) {
+  getPosition(num) {
     return [Math.ceil(num / this.width) - 1, num % this.width];
   }
   /**
@@ -53,6 +66,7 @@ export default class MineSweeper {
         return { value: 0, revealed: false };
       })
     );
+    console.log(this.#minefield);
   }
   /**
    * Gets random positions for mines
@@ -60,14 +74,10 @@ export default class MineSweeper {
   #randomizeMines() {
     this.#minePlacement = Array.from(
       { length: this.length * this.width },
-      (_, i) => {
-        [i, this.#rand.next()];
-      }
+      (_, i) => [i, Math.floor(Math.random() * this.length * this.width * 100)]
     )
-      .sort((a, b) => {
-        a[1] - b[1];
-      })
-      .slice(this.numOfMines)
+      .sort((a, b) => a[1] - b[1])
+      .slice(0, this.numOfMines)
       .map((v) => v[0]);
   }
   /**
@@ -75,14 +85,12 @@ export default class MineSweeper {
    */
   #placeMines() {
     this.#minePlacement.forEach((v) => {
-      let [l, w] = this.#getPosition(v);
+      let [l, w] = this.getPosition(v);
       this.#minefield[l][w].value = mine;
-      const [top, bottom, right, left] = [
-        l > 0,
-        l < length - 1,
-        w < width - 1,
-        w > 0,
-      ];
+      let top = l > 0;
+      let bottom = l < this.length - 1;
+      let right = w < this.width - 1;
+      let left = w > 0;
       //Update values that say how many mines surround button
       //above
       if (top) {
@@ -126,14 +134,18 @@ export default class MineSweeper {
    *
    * @param {Number} pos the position in a 1d array that we are uncovering
    */
-  async #activate(pos) {
-    const [l, w] = this.#getPosition(pos);
+  async activate(pos) {
+    console.log("\tACTIVATECALLED");
+    const [l, w] = this.getPosition(pos);
+    console.log("\tl,w,field", l, w, this.#minefield[l][w]);
     //Already revealed
     if (this.#minefield[l][w].revealed) return;
+    console.log("\tNOTREVEALED");
     const val = this.#minefield[l][w].value;
     //Found bomb
     if (val === mine) {
       this.gameState = -1;
+      this.#minefield[l][w].revealed = true;
       return;
     }
     if (val) {
@@ -142,23 +154,24 @@ export default class MineSweeper {
     }
     //no bombs around pos
     if (val === 0) {
+      this.#minefield[l][w].revealed = true;
       const [top, bottom, right, left] = [
         l > 0,
-        l < length - 1,
-        w < width - 1,
+        l < this.length - 1,
+        w < this.width - 1,
         w > 0,
       ];
       if (top) {
-        if (left) this.#activate(this.#getLinearPosition(l - 1, w - 1));
-        this.#activate(this.#getLinearPosition(l - 1, w));
-        if (right) this.#activate(this.#getLinearPosition(l - 1, w + 1));
+        if (left) await this.activate(this.#getLinearPosition(l - 1, w - 1));
+        await this.activate(this.#getLinearPosition(l - 1, w));
+        if (right) await this.activate(this.#getLinearPosition(l - 1, w + 1));
       }
-      if (left) this.#activate(this.#getLinearPosition(l, w - 1));
-      if (right) this.#activate(this.#getLinearPosition(l, w + 1));
+      if (left) await this.activate(this.#getLinearPosition(l, w - 1));
+      if (right) await this.activate(this.#getLinearPosition(l, w + 1));
       if (bottom) {
-        if (left) this.#activate(this.#getLinearPosition(l + 1, w - 1));
-        this.#activate(this.#getLinearPosition(l + 1, w));
-        if (right) this.#activate(this.#getLinearPosition(l + 1, w + 1));
+        if (left) await this.activate(this.#getLinearPosition(l + 1, w - 1));
+        await this.activate(this.#getLinearPosition(l + 1, w));
+        if (right) await this.activate(this.#getLinearPosition(l + 1, w + 1));
       }
     }
     return;
@@ -167,7 +180,8 @@ export default class MineSweeper {
    * Renders the minefield to minefield Container
    * @param {number} pos
    */
-  async #render() {
+  async render() {
+    console.log("render called");
     let buttonField = "";
     for (let l = 0; l < this.length; l++) {
       for (let w = 0; w < this.width; w++) {
@@ -179,15 +193,13 @@ export default class MineSweeper {
         )})' >${
           this.#minefield[l][w].revealed
             ? renderValue(this.#minefield[l][w].value)
-            : ""
+            : "f"
         }</button>`;
       }
     }
     mineFieldContainer.innerHTML = buttonField;
-  }
-  async clickFunction(pos) {
-    await this.#activate(pos);
-    await this.#render();
+
+    getGameWindow().appendChild(mineFieldContainer);
   }
   /*
    * Makes an instance of minesweeper game
@@ -196,8 +208,6 @@ export default class MineSweeper {
    * @param {number} numOfMines The number of mines to place in the board
    */
   constructor(length, width, numOfMines) {
-    this.#rand = new RandomWholeNumber();
-    this.#rand.setMinMax(0, length * width * 100);
     this.gameState = 0;
     this.numOfMines = Math.min(numOfMines, Math.floor((width + length) / 2));
     this.length = Math.min(length, 25);
@@ -208,6 +218,7 @@ export default class MineSweeper {
     this.#makeMinefield();
     //place Mines and update nearby tiles
     this.#placeMines();
+    console.log("MINES:", this.#minePlacement);
   }
   /**
    * Gets current game State
@@ -219,7 +230,7 @@ export default class MineSweeper {
    * Click funcnction
    */
   clickFunction = (pos) => {
-    const [h, w] = this.#getPosition(pos);
+    const [h, w] = this.getPosition(pos);
     return this.minefield[h][w].value;
   };
 }

@@ -79,8 +79,18 @@
   transition: width 0.3s ease-out;
 }
 #gameWindow {
-  position: relative;
   flex: 1 1 100%;
   overflow: auto;
   padding: 1ch 0 0 1ch;
+}
+
+#minefieldContainer {
+  display: grid;
+  grid-template-columns: repeat(10, 90px);
+  grid-template-rows: repeat(10, 90px);
+  place-items: center;
+}
+.mineButton {
+  height: 90px;
+  width: 90px;
 }

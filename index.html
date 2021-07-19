@@ -8,19 +8,38 @@
   <head>
     <link rel="stylesheet" href="./main.css" />
     <script src="script.js"></script>
+    <script src="gameScripts/MineSweeper.js"></script>
+    <script src="gameScripts/test.js"></script>
+    <script>
+      const loadGame = () => {
+        let gameName = document.getElementById("gameSelector").value;
+        console.log("CLICKED GAME LOADER:", gameName);
+        switch (gameName) {
+          case "minesweeper":
+            console.log("MineSweeper starting . . .");
+            loadMineSweeper(10, 10, 10);
+            break;
+          default:
+            break;
+        }
+      };
+    </script>
     <title>Fun little Games</title>
   </head>
   <body>
     <div id="mainBody">
       <div id="titleBar">
         <div id="logo">Shane's Code</div>
-        <select id="gameSelector">
-          <option>None</option>
-          <option value="gameTextAdventure">
-            Text Based Adventure(Not Implemnted)
-          </option>
-          <option value="MineSwepper">MineSwepper(Not Implemnted)</option>
-        </select>
+        <div>
+          <select id="gameSelector">
+            <option>None</option>
+            <option value="gameTextAdventure">
+              Text Based Adventure(Not Implemnted)
+            </option>
+            <option value="minesweeper">MineSwepper(Not Implemnted)</option>
+          </select>
+          <button onclick="loadGame()">Load</button>
+        </div>
       </div>
       <div id="contentArea">
         <div id="sideBar">
@@ -32,18 +51,23 @@
           </div>
         </div>
         <div id="gameWindow">
-          Lorem ipsum dolor, sit amet consectetur adipisicing elit. Quo alias
-          inventore nemo, voluptas obcaecati enim provident mollitia dolorem
-          veritatis reprehenderit, tempore facilis nostrum iure! Repudiandae
-          nihil, tempora debitis sunt libero minima animi autem illo quod
-          dolorum enim. Officiis similique blanditiis itaque, quidem,
-          accusantium eveniet nostrum in perferendis nobis temporibus fugiat,
-          atque harum! Obcaecati earum suscipit similique architecto assumenda
-          quaerat dignissimos deserunt eum? Et rem quos cumque, placeat,
-          distinctio repudiandae sunt itaque, quod voluptatibus id odio!
-          Architecto reprehenderit assumenda quae. Magnam expedita distinctio,
-          quo vitae, quasi laboriosam voluptates modi tenetur aperiam neque
-          corporis recusandae nulla dicta hic. Nulla ab harum unde.
+          Lorem ipsum dolor,
+          <p>sit</p>
+          amet consectetur adipisicing elit. Quo alias inventore nemo, voluptas
+          <span>obcaecati</span> enim provident mollitia dolorem veritatis
+          reprehenderit, tempore facilis nostrum iure! Repudiandae nihil,
+          tempora debitis sunt libero minima animi autem illo quod dolorum enim.
+          Officiis similique blanditiis
+          <h6>
+            itaque, quidem, accusantium eveniet nostrum in perferendis nobis
+          </h6>
+          temporibus fugiat, atque harum! Obcaecati earum suscipit similique
+          architecto assumenda quaerat dignissimos deserunt eum? Et rem quos
+          cumque, placeat, distinctio repudiandae sunt itaque, quod voluptatibus
+          id odio! Architecto reprehenderit assumenda quae. Magnam expedita
+          distinctio, quo vitae, quasi laboriosam voluptates modi tenetur
+          aperiam neque corporis recusandae nulla dicta hic. Nulla ab harum
+          unde.
         </div>
       </div>
     </div>
