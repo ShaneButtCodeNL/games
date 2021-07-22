@@ -41,7 +41,6 @@
   align-content: stretch;
 }
 #sideBar {
-  flex: 0 1 auto;
   height: 100%;
   overflow-y: auto;
   overflow-x: clip;
@@ -79,18 +78,47 @@
   transition: width 0.3s ease-out;
 }
 #gameWindow {
-  flex: 1 1 100%;
+  flex: 1 1;
+  position: relative;
   overflow: auto;
   padding: 1ch 0 0 1ch;
 }
-
+/*  MINESWEEPER CLONE CSS  */
 #minefieldContainer {
   display: grid;
-  grid-template-columns: repeat(10, 90px);
-  grid-template-rows: repeat(10, 90px);
+  grid-template-columns: repeat(10, 1fr);
+  grid-template-rows: repeat(10, 1fr);
   place-items: center;
+  height: 100%;
+  gap: 0.5rem;
 }
 .mineButton {
-  height: 90px;
-  width: 90px;
+  height: 100%;
+  width: 100%;
+  font-size: larger;
+  border-radius: 1em;
+  transition: filter 0.2s ease-out;
+}
+.mineButton:hover {
+  filter: brightness(2);
+  transition: filter 0.5s ease-out;
+}
+.minesweeperEndScreenWrapper {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+.minesweeperEndScreen {
+  line-height: 9rem;
+  font-size: 8.5rem;
+  border: 1rem;
+  border-style: ridge;
+  padding: 1rem;
+  border-radius: 1rem;
+  text-align: center;
+}
+.minesweeperScore {
+  font-weight: 600;
+  filter: brightness(1.5);
 }

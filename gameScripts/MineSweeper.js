@@ -6,18 +6,18 @@ mineFieldContainer.id = "minefieldContainer";
 mineFieldContainer.innerHTML = "<p>TEST DIV</p>";
 //Value of a mine
 const mine = -1;
+//Render for bomb
+const bombRender = "B";
 //Used in render
 const renderValue = (val) => {
-  if (val) return val === mine ? "B" : `${val}`;
+  if (val) return val === mine ? bombRender : `${val}`;
   return "";
 };
 let game;
 const clickFunction = async (pos) => {
-  console.log("CLICKFUNCTIONCALLED");
+  if (game.gameState !== 0) return;
   await game.activate(pos);
   await game.render();
-  getGameWindow().innerHTML = "";
-  getGameWindow().appendChild(mineFieldContainer);
 };
 const loadMineSweeper = (rows, cols, mines) => {
   console.log("loadMineSweeper", rows, cols, mines);
@@ -69,6 +69,20 @@ class MineSweeper {
     console.log(this.#minefield);
   }
   /**
+   * Gets a score based on number of reveald blocks
+   * @returns The score of the game
+   */
+  async getScore() {
+    let score = 0;
+    for (let row of this.#minefield) {
+      for (let block of row) {
+        if (block.revealed && block.value !== mine) score++;
+      }
+    }
+    console.log("SCORE:", score);
+    return score;
+  }
+  /**
    * Gets random positions for mines
    */
   #randomizeMines() {
@@ -79,6 +93,26 @@ class MineSweeper {
       .sort((a, b) => a[1] - b[1])
       .slice(0, this.numOfMines)
       .map((v) => v[0]);
+  }
+  /**
+   * Gets a win screen for the game
+   * @returns the string representation of a div
+   */
+  async #getWinScreen() {
+    return `<div class="minesweeperEndScreenWrapper"><div class="minesweeperEndScreen">Congratulations you've WON!!!</br>Your Score is . . .</br><span class="minesweeperScore">${await this.getScore()}</span></div></div>`;
+  }
+  /**
+   * Gets a lose screen for the game
+   * @returns the string reprentation of a div
+   */
+  async #getLoseScreeen() {
+    //console.log(`\tEntered getLoseScreen`);
+    const score = await this.getScore();
+    //console.log(`\tGot Score:${score}`);
+    let returnString = `<div class="minesweeperEndScreenWrapper"><div class="minesweeperEndScreen">To bad you LOST!!!</br>${
+      score >= 10 ? "Nice Try you did well" : "Wow that wasn't even close"
+    }</br>SCORE: <span class="minesweeperScore>${score}</span></div></div>`;
+    return returnString;
   }
   /**
    * places mines into the minefield
@@ -135,23 +169,24 @@ class MineSweeper {
    * @param {Number} pos the position in a 1d array that we are uncovering
    */
   async activate(pos) {
-    console.log("\tACTIVATECALLED pos", pos);
     const [l, w] = this.getPosition(pos);
-    console.log("\tl,w,field", l, w, this.#minefield[l][w]);
     //Already revealed
     if (this.#minefield[l][w].revealed) return;
-    console.log("\tNOTREVEALED");
     const val = this.#minefield[l][w].value;
     //Found bomb
     if (val === mine) {
-      console.log("\t\tFOUNDBOMB");
       this.gameState = -1;
       this.#minefield[l][w].revealed = true;
+
       return;
     }
-    console.log("\t\t", val);
     if (val) {
       this.#minefield[l][w].revealed = true;
+      if (
+        this.length * this.width - (await this.getScore()) ===
+        this.numOfMines
+      )
+        this.gameState = 1;
       return;
     }
     //no bombs around pos
@@ -176,14 +211,24 @@ class MineSweeper {
         if (right) await this.activate(this.#getLinearPosition(l + 1, w + 1));
       }
     }
+    if (this.length * this.width - (await this.getScore()) === this.numOfMines)
+      this.gameState = 1;
     return;
   }
   /**
-   * Renders the minefield to minefield Container
+   * Renders the game to minefield Container
    * @param {number} pos
    */
   async render() {
-    console.log("render called");
+    if (this.gameState !== 0) {
+      const str =
+        this.gameState === 1
+          ? await this.#getWinScreen()
+          : await this.#getLoseScreeen();
+      mineFieldContainer.innerHTML = "";
+      getGameWindow().innerHTML = str;
+      return;
+    }
     let buttonField = "";
     for (let l = 0; l < this.length; l++) {
       for (let w = 0; w < this.width; w++) {
@@ -228,11 +273,4 @@ class MineSweeper {
   get gameState() {
     return this.gameState;
   }
-  /**
-   * Click funcnction
-   */
-  clickFunction = (pos) => {
-    const [h, w] = this.getPosition(pos);
-    return this.minefield[h][w].value;
-  };
 }
