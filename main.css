@@ -13,8 +13,8 @@
 #mainBody {
   margin: 0;
   padding: 0;
-  line-height: 1.2rem;
-  font-size: 1rem;
+  line-height: 1.2em;
+  font-size: 1em;
   position: relative;
   background-color: var(--backgroundColor);
   color: var(--fontColor);
@@ -22,6 +22,7 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
+  overflow: hidden;
 }
 #titleBar {
   flex: 0 1 2.4em;
@@ -36,9 +37,8 @@
   align-self: center;
 }
 #contentArea {
-  flex: 1 1 1em;
+  flex: 1 1 auto;
   display: flex;
-  align-content: stretch;
 }
 #sideBar {
   height: 100%;
@@ -81,7 +81,7 @@
   flex: 1 1;
   position: relative;
   overflow: auto;
-  padding: 1ch 0 0 1ch;
+  padding: 1ch;
 }
 /*  MINESWEEPER CLONE CSS  */
 #minefieldContainer {
@@ -91,17 +91,26 @@
   place-items: center;
   height: 100%;
   gap: 0.5rem;
+  overflow-y: auto;
 }
 .mineButton {
   height: 100%;
   width: 100%;
-  font-size: larger;
+  background-color: rgb(152, 171, 189);
+  color: rgb(83, 71, 160);
+  font-size: large;
   border-radius: 1em;
-  transition: filter 0.2s ease-out;
+  transition: filter 0.2s linear;
 }
 .mineButton:hover {
-  filter: brightness(2);
-  transition: filter 0.5s ease-out;
+  filter: brightness(1.5);
+  transition: filter 0.3s linear;
+}
+.revealedMineButton {
+  filter: brightness(0.7);
+}
+.revealedMineButton:hover {
+  filter: brightness(0.7);
 }
 .minesweeperEndScreenWrapper {
   width: 100%;
@@ -110,12 +119,12 @@
   place-items: center;
 }
 .minesweeperEndScreen {
-  line-height: 9rem;
-  font-size: 8.5rem;
-  border: 1rem;
+  line-height: 1.1em;
+  font-size: 2em;
+  border: 0.4em;
   border-style: ridge;
-  padding: 1rem;
-  border-radius: 1rem;
+  padding: 0.1em 0.3em;
+  border-radius: 1em;
   text-align: center;
 }
 .minesweeperScore {

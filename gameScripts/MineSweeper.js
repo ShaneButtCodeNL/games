@@ -1,11 +1,18 @@
 //Window from main page
 const getGameWindow = () => document.getElementById("gameWindow");
+//SideWindow from main page
+const getSideBar = () => document.getElementById("sideBarContent");
 //Container for minefield
 const mineFieldContainer = document.createElement("div");
 mineFieldContainer.id = "minefieldContainer";
-mineFieldContainer.innerHTML = "<p>TEST DIV</p>";
+const sideBarContainer = document.createElement("div");
+sideBarContainer.id = "minesweeperSideBar";
 //Value of a mine
 const mine = -1;
+//String value of a flag
+const flagString = "F";
+//String value for an unrevealed field
+const unrevealedString = "?";
 //Render for bomb
 const bombRender = "B";
 //Used in render
@@ -37,6 +44,8 @@ class MineSweeper {
   numOfMines;
   //Game state 1=win 0=Ongoing -1=lose
   gameState = 0;
+  wins;
+  gamesPlayed;
   //Private
   //The locations of the mines
   #minePlacement;
@@ -63,10 +72,14 @@ class MineSweeper {
   #makeMinefield() {
     this.#minefield = Array.from({ length: this.length }, (_) =>
       Array.from({ length: this.width }, (_) => {
-        return { value: 0, revealed: false };
+        return { value: 0, revealed: false, flagged: false };
       })
     );
     console.log(this.#minefield);
+  }
+  flag(l, w) {
+    console.log("FLAG");
+    this.#minefield[l][w].flagged = !this.#minefield[l][w].flagged;
   }
   /**
    * Gets a score based on number of reveald blocks
@@ -81,6 +94,15 @@ class MineSweeper {
     }
     console.log("SCORE:", score);
     return score;
+  }
+  async getFlagCount() {
+    let count = 0;
+    for (let row of this.#minefield) {
+      for (let block of row) {
+        if (block.flagged) count++;
+      }
+    }
+    return count;
   }
   /**
    * Gets random positions for mines
@@ -108,11 +130,10 @@ class MineSweeper {
   async #getLoseScreeen() {
     //console.log(`\tEntered getLoseScreen`);
     const score = await this.getScore();
-    //console.log(`\tGot Score:${score}`);
-    let returnString = `<div class="minesweeperEndScreenWrapper"><div class="minesweeperEndScreen">To bad you LOST!!!</br>${
+    console.log(`\tGot Score:${score}`);
+    return `<div class="minesweeperEndScreenWrapper"><div class="minesweeperEndScreen">To bad you LOST!!!</br>${
       score >= 10 ? "Nice Try you did well" : "Wow that wasn't even close"
-    }</br>SCORE: <span class="minesweeperScore>${score}</span></div></div>`;
-    return returnString;
+    }</br>SCORE:<span class="minesweeperScore">${score}</span></div></div>`;
   }
   /**
    * places mines into the minefield
@@ -169,6 +190,7 @@ class MineSweeper {
    * @param {Number} pos the position in a 1d array that we are uncovering
    */
   async activate(pos) {
+    console.log("ACTIVATE");
     const [l, w] = this.getPosition(pos);
     //Already revealed
     if (this.#minefield[l][w].revealed) return;
@@ -221,6 +243,7 @@ class MineSweeper {
    */
   async render() {
     if (this.gameState !== 0) {
+      this.wins++;
       const str =
         this.gameState === 1
           ? await this.#getWinScreen()
@@ -229,24 +252,57 @@ class MineSweeper {
       getGameWindow().innerHTML = str;
       return;
     }
-    let buttonField = "";
+    mineFieldContainer.innerHTML = "";
     for (let l = 0; l < this.length; l++) {
       for (let w = 0; w < this.width; w++) {
-        buttonField = `${buttonField}<button class='mineButton ${
-          this.#minefield[l][w].revealed ? "revealed" : "hidden"
-        }MineButton' onclick='clickFunction(${this.#getLinearPosition(
-          l,
-          w
-        )})' >${
-          this.#minefield[l][w].revealed
-            ? renderValue(this.#minefield[l][w].value)
-            : "f"
-        }</button>`;
+        let buttonField = document.createElement("button");
+        buttonField.classList = `mineButton ${
+          this.#minefield[l][w].revealed ? "revealedMineButton" : ""
+        }`;
+        buttonField.onclick = () =>
+          clickFunction(this.#getLinearPosition(l, w));
+        buttonField.onauxclick = (e) => {
+          e.preventDefault();
+          this.flag(l, w);
+          this.render();
+        };
+        buttonField.oncontextmenu = (e) => {
+          e.preventDefault();
+        };
+        buttonField.innerHTML = this.#minefield[l][w].revealed
+          ? renderValue(this.#minefield[l][w].value)
+          : this.#minefield[l][w].flagged
+          ? flagString
+          : unrevealedString;
+        mineFieldContainer.appendChild(buttonField);
       }
     }
-    mineFieldContainer.innerHTML = buttonField;
-
+    getGameWindow().innerHTML = "";
     getGameWindow().appendChild(mineFieldContainer);
+  }
+  //Rebuilds game
+  reset() {
+    this.gameState = 0;
+    //Random Mine Locations Array of locations
+    this.#randomizeMines();
+    //array storage of mine locations
+    this.#makeMinefield();
+    //place Mines and update nearby tiles
+    this.#placeMines();
+    console.log("MINES:", this.#minePlacement);
+  }
+  reset(length, width, numOfMines) {
+    this.numOfMines = Math.min(numOfMines, Math.floor((width + length) / 2));
+    this.length = Math.min(length, 25);
+    this.width = Math.min(width, 25);
+    this.gameState = 0;
+    //Random Mine Locations Array of locations
+    this.#randomizeMines();
+    //array storage of mine locations
+    this.#makeMinefield();
+    //place Mines and update nearby tiles
+    this.#placeMines();
+    console.log("MINES:", this.#minePlacement);
   }
   /*
    * Makes an instance of minesweeper game
@@ -255,17 +311,9 @@ class MineSweeper {
    * @param {number} numOfMines The number of mines to place in the board
    */
   constructor(length, width, numOfMines) {
-    this.gameState = 0;
-    this.numOfMines = Math.min(numOfMines, Math.floor((width + length) / 2));
-    this.length = Math.min(length, 25);
-    this.width = Math.min(width, 25);
-    //Random Mine Locations Array of locations
-    this.#randomizeMines();
-    //array storage of mine locations
-    this.#makeMinefield();
-    //place Mines and update nearby tiles
-    this.#placeMines();
-    console.log("MINES:", this.#minePlacement);
+    this.wins = 0;
+    this.gamesPlayed = 1;
+    this.reset(length, width, numOfMines);
   }
   /**
    * Gets current game State
