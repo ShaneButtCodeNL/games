@@ -22,7 +22,7 @@
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  overflow: hidden;
+  overflow: auto;
 }
 #titleBar {
   flex: 0 1 2.4em;
@@ -39,6 +39,7 @@
 #contentArea {
   flex: 1 1 auto;
   display: flex;
+  position: relative;
 }
 #sideBar {
   height: 100%;
@@ -71,19 +72,29 @@
 }
 #sideBarContent {
   flex: 1 1 auto;
-  width: 10ch;
+  width: 15ch;
   overflow-x: hidden;
   overflow-y: auto;
   will-change: width;
   transition: width 0.3s ease-out;
 }
 #gameWindow {
-  flex: 1 1;
+  flex: 0 1 100%;
   position: relative;
   overflow: auto;
   padding: 1ch;
 }
 /*  MINESWEEPER CLONE CSS  */
+#minesweeperSideBar {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+.minesweeperSideSpan {
+  overflow: hidden;
+  width: 10ch;
+  border-bottom: 1px inset;
+}
 #minefieldContainer {
   display: grid;
   grid-template-columns: repeat(10, 1fr);
