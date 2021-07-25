@@ -115,22 +115,62 @@ class MineSweeper {
   }
   /**
    * Gets a win screen for the game
-   * @returns the string representation of a div
+   * @returns A div object
    */
   async #getWinScreen() {
-    return `<div class="minesweeperEndScreenWrapper"><div class="minesweeperEndScreen">Congratulations you've WON!!!</br>Your Score is . . .</br><span class="minesweeperScore">${await this.getScore()}</span></div></div>`;
+    const endDivWrapper = document.createElement("div");
+    const endDiv = document.createElement("div");
+    const replayButton = document.createElement("button");
+    const scoreSpan = document.createElement("span");
+    endDivWrapper.className = "minesweeperEndScreenWrapper";
+    endDiv.className = "minesweeperEndScreen";
+    replayButton.id = "minesweeperReplayButton";
+    scoreSpan.class = "minesweeperScore";
+    endDiv.innerText = "Congratulations you've WON!!!\nYour Score is . . .\n";
+    scoreSpan.innerText = await this.getScore();
+    replayButton.innerText = "Play Again?";
+    replayButton.onclick = () => {
+      this.reset();
+      this.render();
+    };
+    endDivWrapper.appendChild(endDiv);
+    endDiv.appendChild(scoreSpan);
+    endDiv.appendChild(document.createElement("br"));
+    endDiv.appendChild(replayButton);
+
+    return endDivWrapper;
   }
   /**
    * Gets a lose screen for the game
    * @returns the string reprentation of a div
    */
   async #getLoseScreeen() {
-    //console.log(`\tEntered getLoseScreen`);
     const score = await this.getScore();
-    console.log(`\tGot Score:${score}`);
-    return `<div class="minesweeperEndScreenWrapper"><div class="minesweeperEndScreen">To bad you LOST!!!</br>${
-      score >= 10 ? "Nice Try you did well" : "Wow that wasn't even close"
-    }</br>SCORE:<span class="minesweeperScore">${score}</span></div></div>`;
+    const endDivWrapper = document.createElement("div");
+    const endDiv = document.createElement("div");
+    const replayButton = document.createElement("button");
+    const scoreSpan = document.createElement("span");
+    endDivWrapper.className = "minesweeperEndScreenWrapper";
+    endDiv.className = "minesweeperEndScreen";
+    replayButton.id = "minesweeperReplayButton";
+    scoreSpan.class = "minesweeperScore";
+    endDiv.innerText = `To bad you've LOST.\n${
+      score > 10
+        ? "Nice Try you did well."
+        : "You know your NOT supposed to click the bombs right."
+    }\nScore: `;
+    scoreSpan.innerText = await this.getScore();
+    replayButton.innerText = "Play Again?";
+    replayButton.onclick = () => {
+      this.reset();
+      this.render();
+    };
+
+    endDivWrapper.appendChild(endDiv);
+    endDiv.appendChild(scoreSpan);
+    endDiv.appendChild(document.createElement("br"));
+    endDiv.appendChild(replayButton);
+    return endDivWrapper;
   }
   /**
    * places mines into the minefield
@@ -235,25 +275,34 @@ class MineSweeper {
     return;
   }
   async renderSideBar() {
+    const toManyFlags = this.flags > this.numOfMines;
     const scoreSpan = document.createElement("span");
     const gamesPlayedSpan = document.createElement("span");
     const winsSpan = document.createElement("span");
+    const lossesSpan = document.createElement("span");
     const flagsSpan = document.createElement("span");
     const minesLeftSpan = document.createElement("span");
     scoreSpan.className = "minesweeperSideSpan";
     winsSpan.className = "minesweeperSideSpan";
-    flagsSpan.className = "minesweeperSideSpan";
+    lossesSpan.className = "minesweeperSideSpan";
+    flagsSpan.className = `minesweeperSideSpan${
+      toManyFlags ? " minesweeperSideSpanError" : ""
+    }`;
     gamesPlayedSpan.className = "minesweeperSideSpan";
-    minesLeftSpan.className = "minesweeperSideSpan";
+    minesLeftSpan.className = `minesweeperSideSpan${
+      toManyFlags ? " minesweeperSideSpanError" : ""
+    }`;
     scoreSpan.textContent = `Score:${await this.getScore()}`;
     gamesPlayedSpan.textContent = `Games Played: ${this.gamesPlayed}`;
     winsSpan.textContent = `Wins: ${this.wins}`;
+    lossesSpan.textContent = `Losses: ${this.gamesPlayed - this.wins}`;
     flagsSpan.textContent = `Flags: ${this.flags}`;
     minesLeftSpan.textContent = `Mines: ${this.numOfMines - this.flags}`;
     sideBarContainer.innerHTML = "";
     sideBarContainer.appendChild(scoreSpan);
     sideBarContainer.appendChild(gamesPlayedSpan);
     sideBarContainer.appendChild(winsSpan);
+    sideBarContainer.appendChild(lossesSpan);
     sideBarContainer.appendChild(flagsSpan);
     sideBarContainer.appendChild(minesLeftSpan);
     getSideBar().innerHTML = "";
@@ -266,12 +315,14 @@ class MineSweeper {
   async render() {
     if (this.gameState !== 0) {
       this.wins += this.gameState === 1 ? 1 : 0;
-      const str =
+      this.gamesPlayed++;
+      mineFieldContainer.innerHTML = "";
+      getGameWindow().innerHTML = "";
+      getGameWindow().appendChild(
         this.gameState === 1
           ? await this.#getWinScreen()
-          : await this.#getLoseScreeen();
-      mineFieldContainer.innerHTML = "";
-      getGameWindow().innerHTML = str;
+          : await this.#getLoseScreeen()
+      );
       await this.renderSideBar();
       return;
     }
@@ -339,7 +390,7 @@ class MineSweeper {
   constructor(length, width, numOfMines) {
     this.wins = 0;
     this.flags = 0;
-    this.gamesPlayed = 0;
+    this.gamesPlayed = -1;
     this.resetNewParam(length, width, numOfMines);
   }
   /**

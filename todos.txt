@@ -1,4 +1,8 @@
-[]  minesweeper clone
+[X]  minesweeper clone
+[]  add replay button
 []  css
 []  text based adventure
 []  css
+
+BUGS:
+[] minesweeper right click sometimes opens context menu in firefox(seems to work fine in chrome)

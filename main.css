@@ -84,7 +84,11 @@
   overflow: auto;
   padding: 1ch;
 }
-/*  MINESWEEPER CLONE CSS  */
+/******************************************************  
+*                                                     *
+*       MINESWEEPER CLONE CSS                         *
+*                                                     *
+******************************************************/
 #minesweeperSideBar {
   display: flex;
   flex-direction: column;
@@ -94,6 +98,9 @@
   overflow: hidden;
   width: 10ch;
   border-bottom: 1px inset;
+}
+.minesweeperSideSpanError {
+  color: red;
 }
 #minefieldContainer {
   display: grid;
