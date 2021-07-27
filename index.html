@@ -8,15 +8,18 @@
   <head>
     <link rel="stylesheet" href="./main.css" />
     <script src="script.js"></script>
-    <script src="gameScripts/MineSweeper.js" defer></script>
-    <script>
+    <script src="gameScripts/MineSweeper.js"></script>
+    <script defer>
+      const ms = loadMineSweeper(10, 10, 10);
       const loadGame = () => {
         let gameName = document.getElementById("gameSelector").value;
         console.log("CLICKED GAME LOADER:", gameName);
+
         switch (gameName) {
           case "minesweeper":
             console.log("MineSweeper starting . . .");
-            loadMineSweeper(10, 10, 10);
+            ms.render();
+            //loadMineSweeper(10, 10, 10);
             break;
           default:
             break;

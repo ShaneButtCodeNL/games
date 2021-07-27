@@ -1,5 +1,5 @@
 [X]  minesweeper clone
-[]  add replay button
+[X]  add replay button
 []  css
 []  text based adventure
 []  css

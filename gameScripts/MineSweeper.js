@@ -30,9 +30,7 @@ const clickFunction = async (pos) => {
 const loadMineSweeper = (rows, cols, mines) => {
   console.log("loadMineSweeper", rows, cols, mines);
   game = new MineSweeper(rows, cols, mines);
-  getGameWindow().innerHTML = "";
-  getGameWindow().appendChild(mineFieldContainer);
-  game.render();
+  return game;
 };
 
 class MineSweeper {
@@ -236,7 +234,6 @@ class MineSweeper {
     if (val === mine) {
       this.gameState = -1;
       this.#minefield[l][w].revealed = true;
-
       return;
     }
     if (val) {
@@ -282,6 +279,7 @@ class MineSweeper {
     const lossesSpan = document.createElement("span");
     const flagsSpan = document.createElement("span");
     const minesLeftSpan = document.createElement("span");
+    const resetBtn = document.createElement("button");
     scoreSpan.className = "minesweeperSideSpan";
     winsSpan.className = "minesweeperSideSpan";
     lossesSpan.className = "minesweeperSideSpan";
@@ -292,12 +290,18 @@ class MineSweeper {
     minesLeftSpan.className = `minesweeperSideSpan${
       toManyFlags ? " minesweeperSideSpanError" : ""
     }`;
+    resetBtn.className = "minesweeperSideBtn";
     scoreSpan.textContent = `Score:${await this.getScore()}`;
     gamesPlayedSpan.textContent = `Games Played: ${this.gamesPlayed}`;
     winsSpan.textContent = `Wins: ${this.wins}`;
     lossesSpan.textContent = `Losses: ${this.gamesPlayed - this.wins}`;
     flagsSpan.textContent = `Flags: ${this.flags}`;
     minesLeftSpan.textContent = `Mines: ${this.numOfMines - this.flags}`;
+    resetBtn.innerText = "Reset";
+    resetBtn.addEventListener("click", async () => {
+      this.reset();
+      await this.render();
+    });
     sideBarContainer.innerHTML = "";
     sideBarContainer.appendChild(scoreSpan);
     sideBarContainer.appendChild(gamesPlayedSpan);
@@ -305,6 +309,7 @@ class MineSweeper {
     sideBarContainer.appendChild(lossesSpan);
     sideBarContainer.appendChild(flagsSpan);
     sideBarContainer.appendChild(minesLeftSpan);
+    sideBarContainer.appendChild(resetBtn);
     getSideBar().innerHTML = "";
     getSideBar().appendChild(sideBarContainer);
   }
@@ -358,6 +363,8 @@ class MineSweeper {
    * Starts a new game without changeing settings
    */
   reset() {
+    if (this.gameState !== 0) this.gamesPlayed--;
+    console.log("reset called");
     this.gameState = 0;
     this.gamesPlayed++;
     this.flags = 0;
