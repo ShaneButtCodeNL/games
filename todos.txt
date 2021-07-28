@@ -1,5 +1,9 @@
 [X]  minesweeper clone
 [X]  add replay button
+[X]  add reset button
+[X]  add reset stats button
+[X]  add hint button
+[]  add rules button
 []  css
 []  text based adventure
 []  css

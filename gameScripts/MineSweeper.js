@@ -16,20 +16,32 @@ const flagString = "F";
 const unrevealedString = "?";
 //Render for bomb
 const bombRender = "B";
+const rules =
+  "The object of the game is to reveal all blocks that do not contain mines. Upon clicking a field if it has a bomb under it you lose, otherwise it will reveal how many mines surround it. If it has 0 mines surrounding it, it will auto reveal the fields around it.";
 //Used in render
 const renderValue = (val) => {
   if (val) return val === mine ? bombRender : `${val}`;
   return "";
 };
 let game;
+let collapsed = false;
+const slideMineSweeperRules = () => {
+  const collapseDiv = document.getElementById("minesweeperRulesContent");
+  if (collapsed) collapseDiv.style.maxHeight = 0;
+  else collapseDiv.style.maxHeight = "500px";
+  collapsed = !collapsed;
+};
 const clickFunction = async (pos) => {
   if (game.gameState !== 0) return;
   await game.activate(pos);
   await game.render();
 };
-const loadMineSweeper = (rows, cols, mines) => {
-  console.log("loadMineSweeper", rows, cols, mines);
+const createMineSweeperGame = (rows, cols, mines) => {
+  console.log("Createing mineweeper game");
   game = new MineSweeper(rows, cols, mines);
+};
+const loadMineSweeper = () => {
+  console.log("loadMineSweeper");
   return game;
 };
 
@@ -87,7 +99,7 @@ class MineSweeper {
    * @returns The score of the game
    */
   async getScore() {
-    let score = 0;
+    let score = this.penalty;
     for (let row of this.#minefield) {
       for (let block of row) {
         if (block.revealed && block.value !== mine) score++;
@@ -239,7 +251,7 @@ class MineSweeper {
     if (val) {
       this.#minefield[l][w].revealed = true;
       if (
-        this.length * this.width - (await this.getScore()) ===
+        this.length * this.width - ((await this.getScore()) - this.penalty) ===
         this.numOfMines
       )
         this.gameState = 1;
@@ -267,9 +279,26 @@ class MineSweeper {
         if (right) await this.activate(this.#getLinearPosition(l + 1, w + 1));
       }
     }
-    if (this.length * this.width - (await this.getScore()) === this.numOfMines)
+    if (
+      this.length * this.width - ((await this.getScore()) - this.penalty) ===
+      this.numOfMines
+    )
       this.gameState = 1;
     return;
+  }
+  async hint() {
+    this.penalty -= 5;
+    for (let i = 0; i < this.length; i++) {
+      for (let j = 0; j < this.width; j++) {
+        const field = this.#minefield[i][j];
+        if (!field.revealed && field.value !== -1) {
+          await clickFunction(this.#getLinearPosition(i, j));
+          console.log("gamestate", this.gameState);
+          return;
+        }
+      }
+    }
+    console.log("GameState out", this.gameState);
   }
   async renderSideBar() {
     const toManyFlags = this.flags > this.numOfMines;
@@ -280,6 +309,11 @@ class MineSweeper {
     const flagsSpan = document.createElement("span");
     const minesLeftSpan = document.createElement("span");
     const resetBtn = document.createElement("button");
+    const resetStatsBtn = document.createElement("button");
+    const hintBtn = document.createElement("button");
+    const rulesDiv = document.createElement("div");
+    const rulesHeadder = document.createElement("h3");
+    const rulesContentDiv = document.createElement("div");
     scoreSpan.className = "minesweeperSideSpan";
     winsSpan.className = "minesweeperSideSpan";
     lossesSpan.className = "minesweeperSideSpan";
@@ -291,6 +325,10 @@ class MineSweeper {
       toManyFlags ? " minesweeperSideSpanError" : ""
     }`;
     resetBtn.className = "minesweeperSideBtn";
+    resetStatsBtn.className = "minesweeperSideBtn";
+    hintBtn.className = "minesweeperSideBtn";
+    rulesDiv.className = "minesweeperRulesContainer";
+    rulesContentDiv.id = "minesweeperRulesContent";
     scoreSpan.textContent = `Score:${await this.getScore()}`;
     gamesPlayedSpan.textContent = `Games Played: ${this.gamesPlayed}`;
     winsSpan.textContent = `Wins: ${this.wins}`;
@@ -298,11 +336,26 @@ class MineSweeper {
     flagsSpan.textContent = `Flags: ${this.flags}`;
     minesLeftSpan.textContent = `Mines: ${this.numOfMines - this.flags}`;
     resetBtn.innerText = "Reset";
+    resetStatsBtn.innerText = "Reset Stats";
+    hintBtn.innerText = "Hint?";
+    rulesHeadder.innerText = "Rules";
+    rulesContentDiv.innerText = rules;
     resetBtn.addEventListener("click", async () => {
       this.reset();
       await this.render();
     });
+    resetStatsBtn.addEventListener("click", async () => {
+      game = new MineSweeper(this.length, this.width, this.numOfMines);
+      await game.render();
+    });
+    hintBtn.addEventListener("click", async () => await this.hint());
+    rulesDiv.addEventListener("click", () => slideMineSweeperRules());
+    //Build Rules
+    rulesDiv.appendChild(rulesHeadder);
+    rulesDiv.appendChild(rulesContentDiv);
+    //Build sidebar
     sideBarContainer.innerHTML = "";
+    sideBarContainer.appendChild(rulesDiv);
     sideBarContainer.appendChild(scoreSpan);
     sideBarContainer.appendChild(gamesPlayedSpan);
     sideBarContainer.appendChild(winsSpan);
@@ -310,6 +363,8 @@ class MineSweeper {
     sideBarContainer.appendChild(flagsSpan);
     sideBarContainer.appendChild(minesLeftSpan);
     sideBarContainer.appendChild(resetBtn);
+    sideBarContainer.appendChild(resetStatsBtn);
+    sideBarContainer.appendChild(hintBtn);
     getSideBar().innerHTML = "";
     getSideBar().appendChild(sideBarContainer);
   }
@@ -365,6 +420,7 @@ class MineSweeper {
   reset() {
     if (this.gameState !== 0) this.gamesPlayed--;
     console.log("reset called");
+    this.penalty = 0;
     this.gameState = 0;
     this.gamesPlayed++;
     this.flags = 0;
@@ -398,6 +454,7 @@ class MineSweeper {
     this.wins = 0;
     this.flags = 0;
     this.gamesPlayed = -1;
+    this.penalty = 0;
     this.resetNewParam(length, width, numOfMines);
   }
   /**

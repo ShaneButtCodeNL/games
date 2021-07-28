@@ -1,5 +1,5 @@
 const sideBarWidth = "10ch",
-  zeroWidth = "0ch";
+  zeroWidth = "0px";
 
 const slideSideBar = () => {
   const sideBar = document.getElementById("sideBarContent");

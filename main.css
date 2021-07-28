@@ -149,3 +149,11 @@
   font-weight: 600;
   filter: brightness(1.5);
 }
+
+#minesweeperRulesContent {
+  overflow: hidden;
+  outline: 1px solid;
+  max-height: 0px;
+  will-change: max-height;
+  transition: max-height 0.5s ease-out;
+}
