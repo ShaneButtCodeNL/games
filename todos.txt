@@ -3,10 +3,12 @@
 [X]  add reset button
 [X]  add reset stats button
 [X]  add hint button
-[]  add rules button
+[X]  add rules button
 []  css
+        [X] minefield is responsive for most screens
 []  text based adventure
 []  css
 
 BUGS:
 [] minesweeper right click sometimes opens context menu in firefox(seems to work fine in chrome)
+[]  titlebar breaks at 322px width
