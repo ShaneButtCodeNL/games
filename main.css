@@ -14,7 +14,6 @@
   margin: 0;
   padding: 0;
   line-height: 1.2em;
-  font-size: 1em;
   position: relative;
   background-color: var(--backgroundColor);
   color: var(--fontColor);
@@ -70,12 +69,16 @@
   align-self: center;
 }
 #sideBarContent {
-  flex: 1 1 auto;
-  width: 15ch;
-  overflow-x: hidden;
+  flex: 0 1 auto;
+  width: 20ch;
+  max-width: 100%;
+  overflow-x: clip;
   overflow-y: auto;
-  will-change: width;
-  transition: width 0.3s ease-out;
+  will-change: max-width padding-left padding-right;
+  transition: max-width 0.3s ease-out, padding-left 0.3s ease-out,
+    padding-right 0.3s ease-out;
+  padding-left: 0.1em;
+  padding-right: 0.1em;
 }
 #gameWindow {
   flex: 0 1 100%;
@@ -126,7 +129,7 @@
 @media only screen and (max-width: 450px) {
   #minefieldContainer {
     font-size: 1em;
-    grid-template-columns: repeat(10, 1.5em);
+    grid-template-columns: repeat(10, 1.35em);
   }
 }
 /*fix for height*/
@@ -143,7 +146,6 @@
 @media only screen and (max-height: 370px) {
   #minefieldContainer {
     grid-template-rows: repeat(10, 1.5em);
-    font-size: 1em;
   }
 }
 .mineButton {
@@ -193,8 +195,9 @@
 }
 #minesweeperRulesContent {
   overflow: hidden;
-  outline: 1px solid;
+  outline: var(--borderWidth) solid;
   max-height: 0px;
   will-change: max-height;
   transition: max-height 0.5s ease-out;
+  padding: 0 0.15em;
 }

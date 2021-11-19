@@ -1,4 +1,7 @@
 const gameWindow = document.getElementById("gameWindow");
+const characterDataInput = document.createElement("div");
+characterDataInput.id = "characterDataInputDiv";
+makeCharaDataInput(characterDataInput);
 const textOutput = document.createElement("div"),
   textInput = document.createElement("div");
 textOutput.id = "textAdventureTextOutput";
@@ -29,6 +32,36 @@ const getLevel = (growthRateFunction) => {
 };
 //Map is 11*10;
 const map = Array.from({ length: 10 }, (_) => Array.from({ length: 11 }));
+/**
+ * Poulates the character input div
+ * @param {HTMLDivElement} cDI
+ */
+const makeCharaDataInput = (cDI) => {
+  const nameInput = document.createElement("div");
+  nameInput.className = "charaInputField";
+  nameInput.innerHTML = `<label for="name">Name: </label>
+                         <input type="text" name="name" class="charaInputText" placeholder="Name">`;
+  const raceInput = document.createElement("div");
+  raceInput.className = "charaInputField";
+  raceInput.innerHTML = `<label for="race">Race: </label>
+                         <input type="text" name="race" class="charaInputText" placeholder="Race">`;
+  const classInput = document.createElement("div");
+  classInput.className = "charaInputField";
+  classInput.innerHTML = `<label for="class">Class: </label>
+                         <input type="text" name="class" class="charaInputText" placeholder="Class">`;
+  const skillsInput = document.createElement("div");
+  skillsInput.className = "charaInputField";
+  skillsInput.innerHTML = `<label> for="skills">Skills:</label>
+  <select>
+    <option value="1">skill 1</option>
+    <option value="2">skill 2</option>
+    <option value="3">skill 3</option>
+  </select>`;
+  cDI.append(nameInput);
+  cDI.append(raceInput);
+  cDI.append(classInput);
+  cDI.append(skillsInput);
+};
 //Makes a player
 const makePlayer = (
   race,
@@ -62,6 +95,10 @@ const makeOutputs = async () => {
   );
   return outputs;
 };
+/**
+ * Writes to the output div
+ * @param {String} sentence
+ */
 const appendToDiv = (sentence) => {
   textOutput.innerHTML =
     textOutput.innerHTML + `<div class="outputItem>${sentence}</div>`;
