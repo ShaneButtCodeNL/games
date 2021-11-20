@@ -1,37 +1,3 @@
-const gameWindow = document.getElementById("gameWindow");
-const characterDataInput = document.createElement("div");
-characterDataInput.id = "characterDataInputDiv";
-makeCharaDataInput(characterDataInput);
-const textOutput = document.createElement("div"),
-  textInput = document.createElement("div");
-textOutput.id = "textAdventureTextOutput";
-textInput.id = "textAdventureTextInput";
-//Prev player actions
-const outputs = [];
-//Player data
-const player = {
-  race: "",
-  gender: "",
-  name: "",
-  exp: 0,
-  class: "",
-  stats: {},
-  skills: {},
-  spells: {},
-  equipment: {},
-  inventory: [],
-};
-let gameState = true;
-//Tracks lick count
-let lickCount = 0;
-//Tracks players location as [row,col] starts on bottom in middle
-const location = [10, 6];
-//Gets player Level
-const getLevel = (growthRateFunction) => {
-  growthRateFunction ? growthRateFunction(player.exp) : {};
-};
-//Map is 11*10;
-const map = Array.from({ length: 10 }, (_) => Array.from({ length: 11 }));
 /**
  * Poulates the character input div
  * @param {HTMLDivElement} cDI
@@ -62,67 +28,129 @@ const makeCharaDataInput = (cDI) => {
   cDI.append(classInput);
   cDI.append(skillsInput);
 };
-//Makes a player
-const makePlayer = (
-  race,
-  gender,
-  playerName,
-  playerClass,
-  stats,
-  skills,
-  spells,
-  equipment,
-  inventory
-) => {
-  player.race = race || "HUMAN";
-  player.gender = gender || "OTHER";
-  player.name = playerName || "ANON";
-  player.class = playerClass || "NONE";
-  player.stats = { ...stats };
-  player.skills = { ...skills };
-  player.spells = { ...spells };
-  player.equipment = { ...equipment };
-  player.inventory = inventory || [null, null, null];
+
+const gameWindow = document.getElementById("gameWindow");
+const sideBar = document.getElementById("sideBarContent");
+const characterDataInput = document.createElement("div");
+characterDataInput.id = "characterDataInputDiv";
+makeCharaDataInput(characterDataInput);
+const textOutput = document.createElement("div"),
+  textInput = document.createElement("div");
+textOutput.id = "textAdventureTextOutput";
+textInput.id = "textAdventureTextInput";
+const gameContainer = document.createElement("div");
+gameContainer.id = "textAdventureContainer";
+
+let textGame;
+/**
+ * Creates a game
+ */
+const createTextGame = () => {
+  console.log("creating Text Adventure");
+  const p = {
+    race: "HUMAN",
+    gender: "MALE",
+    name: "SHANE THE CODER",
+    exp: 0,
+    class: "DEVELOPER",
+    stats: { str: 10, hp: 100, mp: 20, agi: 10 },
+    skills: { skill1: "batter" },
+    inventory: [],
+  };
+  textGame = new TextBasedAdventure(p);
 };
 /**
- * writes story from a prev adventure
- * @returns A string of collection of divs that tell the adventure so far
+ * Loads game
+ * @returns The game
  */
-const makeOutputs = async () => {
-  let output = "";
-  outputs.forEach(
-    (v, i) => (output = output + `<div class="outputItem" key=${i}>${v}</div>`)
-  );
-  return outputs;
+const loadTextGame = () => {
+  console.log("Getting Text adventure");
+  return textGame;
 };
+
 /**
  * Writes to the output div
  * @param {String} sentence
  */
-const appendToDiv = (sentence) => {
+const appendToTextOutputDiv = (sentence) => {
   textOutput.innerHTML =
     textOutput.innerHTML + `<div class="outputItem>${sentence}</div>`;
 };
-const makeAction = (action, item) => {
-  switch (action) {
-    case "move": {
-      break;
+
+class TextBasedAdventure {
+  gameState;
+  //Player data
+  player = {
+    race: "",
+    gender: "",
+    name: "",
+    exp: 0,
+    class: "",
+    stats: {},
+    skills: {},
+    inventory: [],
+  };
+  //Prev player actions
+  outputs;
+  //Tracks lick count
+  lickCount;
+  //Tracks players location as [row,col] starts on bottom in middle
+  location;
+  //Gets player Level
+  getLevel = (growthRateFunction) => {
+    growthRateFunction ? growthRateFunction(this.player.exp) : {};
+  };
+  //Map is 11*10;
+  map = Array.from({ length: 10 }, (_) => Array.from({ length: 11 }));
+
+  /**
+   * writes story from a prev adventure
+   */
+  makeOutputs = async () => {
+    this.outputs.forEach((v, i) =>
+      appendToDiv(`<div class="outputItem" key=${i}>${v}</div>`)
+    );
+  };
+  //Makes a player
+  makePlayer = (p) => {
+    this.player.race = p.race || "HUMAN";
+    this.player.gender = p.gender || "OTHER";
+    this.player.name = p.name || "ANON";
+    this.player.class = p.class || "NONE";
+    this.player.stats = { ...p.stats };
+    this.player.skills = { ...p.skills };
+    this.player.inventory = p.inventory || [null, null, null];
+  };
+
+  makeAction = (action, item) => {
+    switch (action) {
+      case "move": {
+        break;
+      }
+      case "look": {
+        break;
+      }
+      case "lick": {
+        break;
+      }
+      case "grab": {
+        break;
+      }
+      case "help": {
+        break;
+      }
+      default:
+        appendToTextOutputDiv(
+          `Action "${action}" is unknown. Try "look", "grab" , "move", "lick", ect`
+        );
     }
-    case "look": {
-      break;
-    }
-    case "lick": {
-      break;
-    }
-    case "grab": {
-      break;
-    }
-    case "help": {
-      break;
-    }
-    default:
-      appendToDiv(
-        `Action "${action}" is unknown. Try "look", "grab" , "move", "lick", ect`
-      );
+  };
+
+  constructor(playerData, pos) {
+    this.makePlayer(playerData);
+    this.gameState = true;
+    this.outputs = [];
+    this.lickCount = 0;
+    this.location = pos ? [...pos] : [10, 6];
   }
-};
+}
