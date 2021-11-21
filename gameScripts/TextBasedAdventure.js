@@ -28,9 +28,10 @@ const makeCharaDataInput = (cDI) => {
   cDI.append(classInput);
   cDI.append(skillsInput);
 };
-
-const gameWindow = document.getElementById("gameWindow");
-const sideBar = document.getElementById("sideBarContent");
+//Gets the window for rendering games in
+const gameWindow = () => document.getElementById("gameWindow");
+//Gets the window for side bar content
+const sideBar = () => document.getElementById("sideBarContent");
 const characterDataInput = document.createElement("div");
 characterDataInput.id = "characterDataInputDiv";
 makeCharaDataInput(characterDataInput);
@@ -40,8 +41,12 @@ textOutput.id = "textAdventureTextOutput";
 textInput.id = "textAdventureTextInput";
 const gameContainer = document.createElement("div");
 gameContainer.id = "textAdventureContainer";
-
+const mapDiv = document.createElement("div");
+mapDiv.id = "mapDiv";
 let textGame;
+//Test data DELETE
+textOutput.innerHTML = "Test text output";
+//Test data end DELETE
 /**
  * Creates a game
  */
@@ -122,7 +127,7 @@ class TextBasedAdventure {
     this.player.inventory = p.inventory || [null, null, null];
   };
 
-  makeAction = (action, item) => {
+  makeAction = (action, noun) => {
     switch (action) {
       case "move": {
         break;
@@ -139,11 +144,19 @@ class TextBasedAdventure {
       case "help": {
         break;
       }
+      case "item": {
+        break;
+      }
       default:
         appendToTextOutputDiv(
           `Action "${action}" is unknown. Try "look", "grab" , "move", "lick", ect`
         );
     }
+  };
+
+  render = () => {
+    gameWindow().innerHTML = "";
+    gameWindow().appendChild(textOutput);
   };
 
   constructor(playerData, pos) {
