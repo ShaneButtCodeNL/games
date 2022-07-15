@@ -17,6 +17,30 @@ startSneckGameButton.addEventListener("click", () => {
 });
 sideBarContainerSneck.appendChild(startSneckGameButton);
 
+//Button to restart game
+const restartSneckGameButton = document.createElement("button");
+restartSneckGameButton.id = "restartSneckGameBtn";
+restartSneckGameButton.type = "button";
+restartSneckGameButton.innerText = "Restart Game";
+restartSneckGameButton.addEventListener("click", () => {
+  console.log("restart game clicked . . .");
+  sGame.resetGame();
+  window.requestAnimationFrame(startSnakeGame);
+});
+sideBarContainerSneck.appendChild(restartSneckGameButton);
+
+//Score div container
+const sneckScorecontainerDiv = document.createElement("div");
+
+//Current score
+const sneckScoreDiv = document.createElement("div");
+
+//Max Score
+const maxSneckScoreDiv = document.createElement("div");
+
+//sneckScorecontainerDiv.appendChild(sneckScoreDiv);
+//sneckScorecontainerDiv.appendChild(maxSneckScoreDiv);
+
 //Game Loop
 //Time of last render
 let prevCurrentTime = 0;
@@ -39,6 +63,9 @@ const makeGameTile = (x, y) => {
   tile.className = "sneckGameTile";
   sneckContainer.appendChild(tile);
 };
+
+const getSneckScore = () => "Score : " + sGame.score;
+const getSneckHighScore = () => "High-Score : " + highScore;
 
 //Gets smallest height or width
 const size = () => {
@@ -79,12 +106,13 @@ const loadSneckGame = () => {
 };
 //varibles
 let sGame;
+let highScore = 0;
 
 //constants
 const sneckHead = "sneckHead";
 const sneckTail = "sneckTail";
 const food = "food";
-const SPEED = 8;
+const SPEED = 10;
 
 //Sneck game class
 class Sneck {
@@ -98,9 +126,28 @@ class Sneck {
   wins;
   score;
 
+  resetGame() {
+    this.gameState = 0;
+    this.score = 0;
+    this.wins = 0;
+    this.lastRenderTime = 0;
+    this.gamesPlayed = 0;
+    this.sneckLength = 1;
+    this.sneckBody = [{ x: 10, y: 10 }];
+    this.foodPos = undefined;
+    this.moveFood();
+    this.xFace = 0;
+    this.yFace = 0;
+    this.draw();
+  }
+
   render() {
     console.log("Render Sneck Game. . .");
     getSideBar().innerHTML = "";
+    sneckScoreDiv.innerHTML = getSneckScore();
+    maxSneckScoreDiv.innerHTML = getSneckHighScore();
+    sideBarContainerSneck.appendChild(sneckScoreDiv);
+    sideBarContainerSneck.appendChild(maxSneckScoreDiv);
     getSideBar().appendChild(sideBarContainerSneck);
     //-1 is lose state 1 is win state
     if (this.gameState !== 0) {
@@ -122,14 +169,26 @@ class Sneck {
 
   //Update states of the game
   update() {
+    highScore = Math.max(highScore, this.score);
+    sneckScoreDiv.innerHTML = getSneckScore();
+    maxSneckScoreDiv.innerHTML = getSneckHighScore();
     //Update sneck pos
-    //Body
-    for (let i = this.sneckLength - 1; i > 0; i--) {
-      this.sneckBody[i] = { ...this.sneckBody[i - 1] };
+    if (this.sneckLength === this.sneckBody.length) {
+      //Body
+      for (let i = this.sneckLength - 1; i > 0; i--) {
+        this.sneckBody[i] = { ...this.sneckBody[i - 1] };
+      }
+      //Head
+      this.sneckBody[0].x += this.xFace;
+      this.sneckBody[0].y += this.yFace;
+    } else {
+      //add head in position old head would've moved
+      this.sneckBody.unshift({
+        x: this.sneckBody[0].x + this.xFace,
+        y: this.sneckBody[0].y + this.yFace,
+      });
+      console.log(this.sneckBody.length, this.sneckLength);
     }
-    //Head
-    this.sneckBody[0].x += this.xFace;
-    this.sneckBody[0].y += this.yFace;
     //Collision
     if (
       this.sneckBody[0].x < 0 ||
@@ -149,6 +208,8 @@ class Sneck {
     ) {
       this.score += 10;
       this.moveFood();
+      //Increase segments
+      this.sneckLength += 1;
     }
   }
 

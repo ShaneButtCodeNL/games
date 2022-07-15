@@ -47,6 +47,13 @@
           console.log("Pressed", e.key);
           e.preventDefault();
           switch (e.key) {
+            case "Enter":
+              startSnakeGame(0);
+              break;
+            case "r":
+              sneckGameInstance.resetGame();
+              startSnakeGame(0);
+              break;
             case "ArrowUp":
               sneckGameInstance.changeDirection(-1, 0);
               break;
@@ -100,7 +107,7 @@
               Text Based Adventure(Not Implemnted)
             </option>
             <option value="minesweeper">(not)MineSweepper</option>
-            <option value="sneck">Sneck(Not Implemnted)</option>
+            <option value="sneck">Sneck</option>
           </select>
           <button onclick="loadGame()">Load</button>
         </div>
