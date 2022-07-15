@@ -39,6 +39,7 @@ const clickFunction = async (pos) => {
 const createMineSweeperGame = (rows, cols, mines) => {
   console.log("Createing mineweeper game");
   game = new MineSweeper(rows, cols, mines);
+  return game;
 };
 const loadMineSweeper = () => {
   console.log("loadMineSweeper");
@@ -373,6 +374,8 @@ class MineSweeper {
    * @param {number} pos
    */
   async render() {
+    getSideBar().innerHTML = "";
+    getSideBar().appendChild(sideBarContainer);
     if (this.gameState !== 0) {
       this.wins += this.gameState === 1 ? 1 : 0;
       this.gamesPlayed++;

@@ -43,6 +43,8 @@ const gameContainer = document.createElement("div");
 gameContainer.id = "textAdventureContainer";
 const mapDiv = document.createElement("div");
 mapDiv.id = "mapDiv";
+const statsDiv = document.createElement("div");
+statsDiv.id = "statsDiv";
 let textGame;
 //Test data DELETE
 textOutput.innerHTML = "Test text output";
@@ -78,8 +80,7 @@ const loadTextGame = () => {
  * @param {String} sentence
  */
 const appendToTextOutputDiv = (sentence) => {
-  textOutput.innerHTML =
-    textOutput.innerHTML + `<div class="outputItem>${sentence}</div>`;
+  textOutput.innerHTML = textOutput.innerHTML + `${sentence}`;
 };
 
 class TextBasedAdventure {
@@ -112,8 +113,9 @@ class TextBasedAdventure {
    * writes story from a prev adventure
    */
   makeOutputs = async () => {
+    textOutput.innerHTML = "";
     this.outputs.forEach((v, i) =>
-      appendToDiv(`<div class="outputItem" key=${i}>${v}</div>`)
+      appendToTextOutputDiv(`<div class="outputItem" key=${i}>${v}</div>`)
     );
   };
   //Makes a player
@@ -156,13 +158,22 @@ class TextBasedAdventure {
 
   render = () => {
     gameWindow().innerHTML = "";
-    gameWindow().appendChild(textOutput);
+    gameContainer.innerHTML = "";
+    this.makeOutputs();
+    gameContainer.appendChild(textOutput);
+    gameContainer.appendChild(textInput);
+    gameContainer.appendChild(mapDiv);
+    gameContainer.appendChild(statsDiv);
+    gameWindow().appendChild(gameContainer);
   };
 
   constructor(playerData, pos) {
     this.makePlayer(playerData);
     this.gameState = true;
-    this.outputs = [];
+    this.outputs = [
+      "Your Adventure Begins. . .",
+      "You stand at the castle gates. . .",
+    ];
     this.lickCount = 0;
     this.location = pos ? [...pos] : [10, 6];
   }

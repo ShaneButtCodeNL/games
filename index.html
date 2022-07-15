@@ -10,18 +10,25 @@
     <script src="script.js"></script>
     <script src="gameScripts/MineSweeper.js"></script>
     <script src="gameScripts/TextBasedAdventure.js"></script>
+    <script src="gameScripts/Sneck.js"></script>
     <script defer>
+      let currentGame = "";
       const ms = createMineSweeperGame(10, 10, 10);
       const tba = createTextGame();
+      const sneckGameInstance = createSneckGame();
       const loadGame = () => {
         let gameName = document.getElementById("gameSelector").value;
         console.log("CLICKED GAME LOADER:", gameName);
-
+        currentGame = gameName;
         switch (gameName) {
           case "none":
             console.log("No Game Selected . . .");
             document.getElementById("gameWindow").innerHTML = "";
             document.getElementById("sideBarContent").innerHTML = "";
+            break;
+          case "sneck":
+            console.log("Sneck starting . . .");
+            loadSneckGame().render();
             break;
           case "minesweeper":
             console.log("MineSweeper starting . . .");
@@ -35,6 +42,50 @@
             break;
         }
       };
+      document.addEventListener("keydown", (e) => {
+        if (currentGame === "sneck") {
+          console.log("Pressed", e.key);
+          e.preventDefault();
+          switch (e.key) {
+            case "ArrowUp":
+              sneckGameInstance.changeDirection(-1, 0);
+              break;
+            case "ArrowDown":
+              sneckGameInstance.changeDirection(1, 0);
+              break;
+            case "ArrowLeft":
+              sneckGameInstance.changeDirection(0, -1);
+              break;
+            case "ArrowRight":
+              sneckGameInstance.changeDirection(0, 1);
+              break;
+            case "w":
+              sneckGameInstance.changeDirection(-1, 0);
+              break;
+            case "s":
+              sneckGameInstance.changeDirection(1, 0);
+              break;
+            case "a":
+              sneckGameInstance.changeDirection(0, -1);
+              break;
+            case "d":
+              sneckGameInstance.changeDirection(0, 1);
+              break;
+            case "W":
+              sneckGameInstance.changeDirection(-1, 0);
+              break;
+            case "S":
+              sneckGameInstance.changeDirection(1, 0);
+              break;
+            case "A":
+              sneckGameInstance.changeDirection(0, -1);
+              break;
+            case "D":
+              sneckGameInstance.changeDirection(0, 1);
+              break;
+          }
+        }
+      });
     </script>
     <title>Fun little Games</title>
   </head>
@@ -49,6 +100,7 @@
               Text Based Adventure(Not Implemnted)
             </option>
             <option value="minesweeper">(not)MineSweepper</option>
+            <option value="sneck">Sneck(Not Implemnted)</option>
           </select>
           <button onclick="loadGame()">Load</button>
         </div>

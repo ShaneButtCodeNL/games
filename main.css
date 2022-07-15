@@ -201,3 +201,35 @@
   transition: max-height 0.5s ease-out;
   padding: 0 0.15em;
 }
+
+/******************************************************  
+*                                                     *
+*             sneck CLONE CSS                         *
+*                                                     *
+******************************************************/
+
+#sneckContainer {
+  background-color: cornflowerblue;
+  display: grid;
+  grid-template-columns: repeat(21, 1fr);
+  grid-template-rows: repeat(21, 1fr);
+  border: 5px #ccc;
+  border-style: ridge;
+  place-content: center;
+  justify-content: center;
+  margin: auto;
+}
+
+.sneckGameTile {
+}
+.sneckHead {
+  background-color: goldenrod;
+}
+.sneckBody {
+  background-color: gold;
+}
+
+.food {
+  background-color: red;
+  border-radius: 100vmax;
+}
