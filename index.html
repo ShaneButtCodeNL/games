@@ -48,11 +48,10 @@
           e.preventDefault();
           switch (e.key) {
             case "Enter":
-              startSnakeGame(0);
+              startSnakeGame();
               break;
             case "r":
               sneckGameInstance.resetGame();
-              startSnakeGame(0);
               break;
             case "ArrowUp":
               sneckGameInstance.changeDirection(-1, 0);

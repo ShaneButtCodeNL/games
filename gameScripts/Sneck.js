@@ -13,7 +13,7 @@ startSneckGameButton.type = "button";
 startSneckGameButton.innerText = "Start Game";
 startSneckGameButton.addEventListener("click", () => {
   console.log("start game clicked . . .");
-  window.requestAnimationFrame(startSnakeGame);
+  startSnakeGame();
 });
 sideBarContainerSneck.appendChild(startSneckGameButton);
 
@@ -25,7 +25,7 @@ restartSneckGameButton.innerText = "Restart Game";
 restartSneckGameButton.addEventListener("click", () => {
   console.log("restart game clicked . . .");
   sGame.resetGame();
-  window.requestAnimationFrame(startSnakeGame);
+  window.requestAnimationFrame(startSnakeGameLoop);
 });
 sideBarContainerSneck.appendChild(restartSneckGameButton);
 
@@ -38,17 +38,36 @@ const sneckScoreDiv = document.createElement("div");
 //Max Score
 const maxSneckScoreDiv = document.createElement("div");
 
-//sneckScorecontainerDiv.appendChild(sneckScoreDiv);
-//sneckScorecontainerDiv.appendChild(maxSneckScoreDiv);
+//Start screen div
+const startSneckScreen = document.createElement("div");
+startSneckScreen.classList.add("sneckModalScreen");
+startSneckScreen.style.display = "grid";
+startSneckScreen.innerHTML =
+  '<h1>SNECK GAME</h1><br/><h4 class="flashingText">Press "Enter" to play!</h4>';
+sneckContainer.appendChild(startSneckScreen);
+
+//Start screen div
+const endSneckScreen = document.createElement("div");
+endSneckScreen.classList.add("sneckModalScreen");
+endSneckScreen.style.display = "none";
+endSneckScreen.innerHTML =
+  '<h1>SNECK GAME</h1><br/><h4 class="flashingText">Press "R" to Restart!</h4>';
+sneckContainer.appendChild(endSneckScreen);
 
 //Game Loop
 //Time of last render
 let prevCurrentTime = 0;
+function startSnakeGame() {
+  sGame.gameState = 1;
+  startSneckScreen.style.display = "none";
+  endSneckScreen.style.display = "none";
+  startSnakeGameLoop(0);
+}
 //Loops
-function startSnakeGame(currentTime) {
+function startSnakeGameLoop(currentTime) {
   console.log("Game state", sGame.gameState);
 
-  if (sGame.gameState === 0) window.requestAnimationFrame(startSnakeGame);
+  if (sGame.gameState === 1) window.requestAnimationFrame(startSnakeGameLoop);
   let secSinceLastRender = (currentTime - prevCurrentTime) / 1000;
   if (secSinceLastRender < 1 / SPEED) return;
   console.log("RENDERED", secSinceLastRender, prevCurrentTime);
@@ -90,6 +109,8 @@ const makeBoard = () => {
       makeGameTile(x, y);
     }
   }
+  sneckContainer.appendChild(startSneckScreen);
+  sneckContainer.appendChild(endSneckScreen);
 };
 
 //Makes a sneckGame and returns it
@@ -150,7 +171,8 @@ class Sneck {
     sideBarContainerSneck.appendChild(maxSneckScoreDiv);
     getSideBar().appendChild(sideBarContainerSneck);
     //-1 is lose state 1 is win state
-    if (this.gameState !== 0) {
+    if (this.gameState === -1) {
+      endSneckScreen.style.display = "grid";
       return;
     }
     this.draw();
@@ -219,13 +241,16 @@ class Sneck {
     getGameWindow().innerHTML = "";
     getGameWindow().appendChild(sneckContainer);
     const box = `${size() - 50}px`;
-    //console.log("box:", box);
     sneckContainer.style.width = box;
     sneckContainer.style.height = box;
+    startSneckScreen.style.display = this.gameState === 0 ? "grid" : "none";
+    endSneckScreen.style.display = this.gameState === -1 ? "grid" : "none";
     makeBoard();
     this.update();
-    if (this.gameState === -1) return;
-    //console.log("htm;", sneckContainer.innerHTML);
+    if (this.gameState === -1) {
+      endSneckScreen.style.display = "grid";
+      return;
+    }
     let b = true;
     this.sneckBody.forEach((seg) => {
       let [x, y] = [seg.x, seg.y];
@@ -233,7 +258,6 @@ class Sneck {
       tile.classList.add(b ? sneckHead : sneckTail);
       b = false;
     });
-    //console.log(this.foodPos);
     document
       .getElementById(`gameTile-${this.foodPos.x}-${this.foodPos.y}`)
       .classList.add(food);
