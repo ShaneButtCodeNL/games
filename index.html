@@ -7,92 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <head>
     <link rel="stylesheet" href="./main.css" />
-    <script src="script.js"></script>
-    <script src="gameScripts/MineSweeper.js"></script>
-    <script src="gameScripts/TextBasedAdventure.js"></script>
-    <script src="gameScripts/Sneck.js"></script>
-    <script defer>
-      let currentGame = "";
-      const ms = createMineSweeperGame(10, 10, 10);
-      const tba = createTextGame();
-      const sneckGameInstance = createSneckGame();
-      const loadGame = () => {
-        let gameName = document.getElementById("gameSelector").value;
-        console.log("CLICKED GAME LOADER:", gameName);
-        currentGame = gameName;
-        switch (gameName) {
-          case "none":
-            console.log("No Game Selected . . .");
-            document.getElementById("gameWindow").innerHTML = "";
-            document.getElementById("sideBarContent").innerHTML = "";
-            break;
-          case "sneck":
-            console.log("Sneck starting . . .");
-            loadSneckGame().render();
-            break;
-          case "minesweeper":
-            console.log("MineSweeper starting . . .");
-            loadMineSweeper().render();
-            break;
-          case "gameTextAdventure":
-            console.log("Text adventure starting . . .");
-            loadTextGame().render();
-            break;
-          default:
-            break;
-        }
-      };
-      document.addEventListener("keydown", (e) => {
-        if (currentGame === "sneck") {
-          console.log("Pressed", e.key);
-          e.preventDefault();
-          switch (e.key) {
-            case "Enter":
-              startSnakeGame();
-              break;
-            case "r":
-              sneckGameInstance.resetGame();
-              break;
-            case "ArrowUp":
-              sneckGameInstance.changeDirection(-1, 0);
-              break;
-            case "ArrowDown":
-              sneckGameInstance.changeDirection(1, 0);
-              break;
-            case "ArrowLeft":
-              sneckGameInstance.changeDirection(0, -1);
-              break;
-            case "ArrowRight":
-              sneckGameInstance.changeDirection(0, 1);
-              break;
-            case "w":
-              sneckGameInstance.changeDirection(-1, 0);
-              break;
-            case "s":
-              sneckGameInstance.changeDirection(1, 0);
-              break;
-            case "a":
-              sneckGameInstance.changeDirection(0, -1);
-              break;
-            case "d":
-              sneckGameInstance.changeDirection(0, 1);
-              break;
-            case "W":
-              sneckGameInstance.changeDirection(-1, 0);
-              break;
-            case "S":
-              sneckGameInstance.changeDirection(1, 0);
-              break;
-            case "A":
-              sneckGameInstance.changeDirection(0, -1);
-              break;
-            case "D":
-              sneckGameInstance.changeDirection(0, 1);
-              break;
-          }
-        }
-      });
-    </script>
+    <script defer src="./dist/main.js" type="module"></script>
     <title>Fun little Games</title>
   </head>
   <body>
@@ -108,13 +23,13 @@
             <option value="minesweeper">(not)MineSweepper</option>
             <option value="sneck">Sneck</option>
           </select>
-          <button onclick="loadGame()">Load</button>
+          <button id="loadGameButton">Load</button>
         </div>
       </div>
       <div id="contentArea">
         <div id="sideBar">
           <div id="sideBarContent">Content</div>
-          <div id="sideBarSlide" onclick="slideSideBar()">
+          <div id="sideBarSlide">
             <span class="slideChar">S</span>
             <div class="slideLine"></div>
             <span class="slideChar">S</span>

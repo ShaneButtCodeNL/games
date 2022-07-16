@@ -1,4 +1,4 @@
-import { getGameWindow, getSideBar } from "./helpers";
+import { getGameWindow, getSideBar } from "./helpers.js";
 export let startSnakeGame, createSneckGame, loadSneckGame;
 //Container for sneck game
 const sneckContainer = document.createElement("div");
@@ -67,12 +67,9 @@ startSnakeGame = () => {
 };
 //Loops
 function startSnakeGameLoop(currentTime) {
-  console.log("Game state", sGame.gameState);
-
   if (sGame.gameState === 1) window.requestAnimationFrame(startSnakeGameLoop);
   let secSinceLastRender = (currentTime - prevCurrentTime) / 1000;
   if (secSinceLastRender < 1 / SPEED) return;
-  console.log("RENDERED", secSinceLastRender, prevCurrentTime);
   prevCurrentTime = currentTime;
   sGame.draw();
 }
@@ -239,7 +236,6 @@ class Sneck {
 
   //Draw the game to the game board
   draw() {
-    console.log("Sneck Draw . . .");
     getGameWindow().innerHTML = "";
     getGameWindow().appendChild(sneckContainer);
     const box = `${size() - 50}px`;
@@ -266,7 +262,6 @@ class Sneck {
   }
 
   changeDirection(x, y) {
-    console.log("x", x, "y", y);
     if (this.xFace === 0 && x) {
       this.xFace = x;
       this.yFace = 0;
@@ -278,7 +273,6 @@ class Sneck {
   }
   //Move food to unoccupyed block
   moveFood() {
-    console.log("Move Food. . .");
     //Get random point {x,y}
     let [newX, newY] = getRandomPos();
     //If {x,y} is occupiied get new point

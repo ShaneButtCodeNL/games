@@ -1,4 +1,4 @@
-import { getGameWindow, getSideBar } from "./helpers";
+import { getGameWindow, getSideBar } from "./helpers.js";
 
 export let createMineSweeperGame;
 export let loadMineSweeper;
