@@ -1,0 +1,23 @@
+{
+  "name": "games",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "webpack ./js/index.js dist/bundle.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShaneButtCodeNL/games.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ShaneButtCodeNL/games/issues"
+  },
+  "homepage": "https://github.com/ShaneButtCodeNL/games#readme",
+  "dependencies": {
+    "webpack": "^5.73.0"
+  }
+}
