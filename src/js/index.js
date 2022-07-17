@@ -1,4 +1,5 @@
 import { createMineSweeperGame, loadMineSweeper } from "./MineSweeper.js";
+import "../css/main.css";
 import {} from "./TextBasedAdventure.js";
 import { createSneckGame, loadSneckGame, startSnakeGame } from "./Sneck.js";
 
