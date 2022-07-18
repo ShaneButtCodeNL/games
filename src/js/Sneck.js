@@ -53,7 +53,7 @@ const endSneckScreen = document.createElement("div");
 endSneckScreen.classList.add("sneckModalScreen");
 endSneckScreen.style.display = "none";
 endSneckScreen.innerHTML =
-  '<h1>SNECK GAME</h1><br/><h4 class="flashingText">Press "R" to Restart!</h4>';
+  '<h1>SNECK GAME</h1><h3 id="gameOverScore" class="flashingText" style="animation-delay:-140ms;"></h3><h2 class="flashingText" style="animation-delay:-80ms;" >Game Over</h2><h4 class="flashingText">Press "R" to Restart!</h4>';
 sneckContainer.appendChild(endSneckScreen);
 
 //Game Loop
@@ -172,6 +172,7 @@ class Sneck {
     //-1 is lose state 1 is win state
     if (this.gameState === -1) {
       endSneckScreen.style.display = "grid";
+
       return;
     }
     this.draw();
@@ -219,6 +220,8 @@ class Sneck {
       this.bodyCollision()
     ) {
       this.gameState = -1;
+      const element = document.getElementById("gameOverScore");
+      element.innerHTML = getSneckScore();
       console.log("Game Over");
     }
     //Get Food
@@ -262,6 +265,7 @@ class Sneck {
   }
 
   changeDirection(x, y) {
+    if (this.gameState !== 1) return;
     if (this.xFace === 0 && x) {
       this.xFace = x;
       this.yFace = 0;

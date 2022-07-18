@@ -1,14 +1,22 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 module.exports = {
-  entry: "./src/js/index.js",
-
+  entry: {
+    main: "./src/js/index.js",
+  },
   plugins: [new HtmlWebpackPlugin({ template: "./src/templates/main.html" })],
   module: {
     rules: [
       {
-        test: /\.css$/i,
-        use: ["style-loader", "css-loader"],
+        test: /\.html$/i,
+        use: ["html-loader"],
+      },
+      {
+        test: /\.(svg|png|jpg|gif)$/i,
+        type: "asset/resource",
+        generator: {
+          filename: "img/[hash][ext][query]",
+        },
       },
     ],
   },
